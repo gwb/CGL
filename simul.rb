@@ -58,7 +58,71 @@ class ConwayGrid
 
 end
 
+
+class RuleSolver 
+  def initialize(rule)
+    @rule = rule
+  end
+
+  def test_under_population(an)
+    if an < @rule[:under_population]
+      return 0
+    else
+      return nil
+    end
+  end
+
+  def test_over_population(x, y, an)
+    if an > @rule[:over_population]
+      return 0
+    else
+      return nil
+    end
+  end
+
+  def test_survive(x, y, an)
+    if @rule[:survive].include? an
+      return 1
+    else
+      return nil
+    end
+  end
+
+  def test_reproduction(x, y, an)
+    if an == @rule[:reproduction]
+      return 1
+    else
+      return nil
+    end
+  end
+
+  
+
+  def run(x, y, grid)
+    it = grid.getItem(x, y)
+    an = grid.getNeighborsAlive(x, y)
+    if it == 1
+      [test_under_population, test_over_population, test_survive].each do |fn|
+        res = fn x, y, an
+        if res
+          return res
+        end
+      end
+    else
+      res = test_reproduction x, y, an
+      if res 
+        return res
+      else
+        return 0
+      end
+    end
+  end
+
+end      
+
+
 class ConwayGame
+  attr_accessor :grid
   def initialize(size, rules)
     @grid = ConwayGrid.new size
     @grid.shuffle

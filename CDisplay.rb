@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'gosu'
+require 'simul.rb'
 
 class GraphicGrid
   attr_accessor :grid
@@ -30,28 +31,52 @@ end
 
 
 class GameWindow < Gosu::Window
-  def initialize(res, size)
+  def initialize(res, size, rules)
     @res = res
     @size = size
 
     super(res, res, false)
     @displayGrid = GraphicGrid.new self, @res, @size
+    @simul = ConwayGame.new(size, rules)
 
-    @ci = 0
-    @cj = 0
+#    @ci = 0
+#    @cj = 0
   end
 
   def update
-    if @ci < @size - 1
-      @ci += 1
-    end
+    @simul.playRound
   end
 
   def draw
-    @displayGrid.drawSquare(@ci, @cj, Gosu::blue)
+    sleep 1
+    @size.times.each do |x|
+      @size.times.each do |y|
+        it = @simul.grid.getItem(x, y)
+        #puts it
+        case it
+          when 0
+          @displayGrid.drawSquare(x, y, Gosu::black)
+          when 1
+          @displayGrid.drawSquare(x, y, Gosu::blue)
+          when 3
+          @displayGrid.drawSquare(x, y, Gosu::red)
+        end
+      end
+    end
   end
+#  def update
+#    if @ci < @size - 1
+#      @ci += 1
+#    end
+#  end
+
+#  def draw
+#    @displayGrid.drawSquare(@ci, @cj, Gosu::blue)
+#  end
 end
 
-window = GameWindow.new 640, 10
+rules = {:dead => 4, :alive => 5, :alive2 => 2, :alive3 => 3} 
+#rules = {:dead => 3, :alive => 5, :alive2 => 3, :alive3 => 3}
+window = GameWindow.new 640, 10, rules
 window.show
 
