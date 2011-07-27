@@ -31,16 +31,14 @@ end
 
 
 class GameWindow < Gosu::Window
-  def initialize(res, size, rules)
+
+  def initialize(res, size, rules, seed)
     @res = res
     @size = size
 
     super(res, res, false)
     @displayGrid = GraphicGrid.new self, @res, @size
-    @simul = ConwayGame.new(size, rules)
-
-#    @ci = 0
-#    @cj = 0
+    @simul = ConwayGame.new(size, rules, seed)
   end
 
   def update
@@ -48,11 +46,10 @@ class GameWindow < Gosu::Window
   end
 
   def draw
-    sleep 1
+    #sleep 0.3
     @size.times.each do |x|
       @size.times.each do |y|
         it = @simul.grid.getItem(x, y)
-        #puts it
         case it
           when 0
           @displayGrid.drawSquare(x, y, Gosu::black)
@@ -62,20 +59,13 @@ class GameWindow < Gosu::Window
       end
     end
   end
-#  def update
-#    if @ci < @size - 1
-#      @ci += 1
-#    end
-#  end
 
-#  def draw
-#    @displayGrid.drawSquare(@ci, @cj, Gosu::blue)
-#  end
 end
 
 rules = {:under_population => 2, :over_population => 3, :survive => [2,3], :reproduction => 3}
+seed = {[50,50] => 1, [50,52] => 1, [48,52] => 1, [47,54] => 1, [46, 54] => 1, [45,54] => 1, [46, 56] => 1, [45, 56] => 1, [44, 56] => 1, [45, 57] => 1}
 #rules = {:dead => 4, :alive => 5, :alive2 => 2, :alive3 => 3} 
 #rules = {:dead => 3, :alive => 5, :alive2 => 3, :alive3 => 3}
-window = GameWindow.new 640, 100, rules
+window = GameWindow.new 640, 100, rules, seed
 window.show
 

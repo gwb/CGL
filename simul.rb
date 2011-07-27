@@ -4,6 +4,12 @@ class ConwayGrid
     @cells = Array.new(size) {|index| Array.new(size, 0)}
   end
 
+  def seed(instructions)
+    instructions.each do |key, val|
+      @cells[key[0]][key[1]] = val
+    end
+  end
+
   def shuffle
     @cells = @cells.collect do |line|
       line.collect {rand 2}
@@ -121,9 +127,11 @@ end
 
 class ConwayGame
   attr_accessor :grid
-  def initialize(size, rules)
+
+  def initialize(size, rules, seed)
     @grid = ConwayGrid.new size
-    @grid.shuffle
+    # @grid.shuffle
+    @grid.seed seed
     @rules = rules
     @size = size
     @ruleSolver = RuleSolver.new @rules
@@ -143,27 +151,6 @@ class ConwayGame
     @grid = tempGrid
   end
 
-
-  def playRound2
-    #tempGrid = ConwayGrid.new @size
-    tempGrid = @grid.clone
-    (0...@size).each do |x|
-      (0...@size).each do |y|
-        if @grid.getItem(x,y) == 1
-          if @grid.getNeighborsAlive(x,y) > @rules[:alive]
-            tempGrid.setItem(x,y, 0)
-          elsif @grid.getNeighborsDead(x,y) > @rules[:dead]
-            tempGrid.setItem(x,y, 0)
-          end
-        elsif @grid.getItem(x,y) == 0
-          if @grid.getNeighborsAlive(x,y) > @rules[:alive2]
-            tempGrid.setItem(x,y, 1)
-          end
-        end
-      end
-    end
-    @grid = tempGrid
-  end
 end
 
          
