@@ -58,8 +58,6 @@ class GameWindow < Gosu::Window
           @displayGrid.drawSquare(x, y, Gosu::black)
           when 1
           @displayGrid.drawSquare(x, y, Gosu::blue)
-          when 3
-          @displayGrid.drawSquare(x, y, Gosu::red)
         end
       end
     end
@@ -75,8 +73,9 @@ class GameWindow < Gosu::Window
 #  end
 end
 
-rules = {:dead => 4, :alive => 5, :alive2 => 2, :alive3 => 3} 
+rules = {:under_population => 2, :over_population => 3, :survive => [2,3], :reproduction => 3}
+#rules = {:dead => 4, :alive => 5, :alive2 => 2, :alive3 => 3} 
 #rules = {:dead => 3, :alive => 5, :alive2 => 3, :alive3 => 3}
-window = GameWindow.new 640, 10, rules
+window = GameWindow.new 640, 100, rules
 window.show
 

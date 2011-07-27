@@ -33,7 +33,7 @@ class ConwayGrid
     neighbors.each do |item|
       if item[1] == 1
         res[:alive] << item[0]
-      elsif item[1] == 3
+      elsif item[1] == 0
         res[:dead] << item[0]
       end
     end
@@ -72,7 +72,7 @@ class RuleSolver
     end
   end
 
-  def test_over_population(x, y, an)
+  def test_over_population(an)
     if an > @rule[:over_population]
       return 0
     else
@@ -80,7 +80,7 @@ class RuleSolver
     end
   end
 
-  def test_survive(x, y, an)
+  def test_survive(an)
     if @rule[:survive].include? an
       return 1
     else
@@ -88,7 +88,7 @@ class RuleSolver
     end
   end
 
-  def test_reproduction(x, y, an)
+  def test_reproduction(an)
     if an == @rule[:reproduction]
       return 1
     else
@@ -96,20 +96,18 @@ class RuleSolver
     end
   end
 
-  
-
   def run(x, y, grid)
     it = grid.getItem(x, y)
     an = grid.getNeighborsAlive(x, y)
     if it == 1
-      [test_under_population, test_over_population, test_survive].each do |fn|
-        res = fn x, y, an
+      [self.method(:test_under_population), self.method(:test_over_population), self.method(:test_survive)].each do |fn|
+        res = fn.call an
         if res
           return res
         end
       end
     else
-      res = test_reproduction x, y, an
+      res = test_reproduction an
       if res 
         return res
       else
@@ -128,6 +126,7 @@ class ConwayGame
     @grid.shuffle
     @rules = rules
     @size = size
+    @ruleSolver = RuleSolver.new @rules
   end
 
   def showGrid
@@ -135,22 +134,29 @@ class ConwayGame
   end
 
   def playRound
+    tempGrid = @grid.clone
+    (0...@size).each do |x|
+      (0...@size).each do |y|
+        tempGrid.setItem(x, y, @ruleSolver.run(x, y, @grid))
+      end
+    end
+    @grid = tempGrid
+  end
+
+
+  def playRound2
     #tempGrid = ConwayGrid.new @size
     tempGrid = @grid.clone
     (0...@size).each do |x|
       (0...@size).each do |y|
         if @grid.getItem(x,y) == 1
           if @grid.getNeighborsAlive(x,y) > @rules[:alive]
-            tempGrid.setItem(x,y, 3)
+            tempGrid.setItem(x,y, 0)
           elsif @grid.getNeighborsDead(x,y) > @rules[:dead]
-            tempGrid.setItem(x,y, 3)
+            tempGrid.setItem(x,y, 0)
           end
-        elsif @grid.getItem(x,y) == 3
+        elsif @grid.getItem(x,y) == 0
           if @grid.getNeighborsAlive(x,y) > @rules[:alive2]
-            tempGrid.setItem(x,y, 1)
-          end
-        else
-          if @grid.getNeighborsAlive(x,y) > @rules[:alive3]
             tempGrid.setItem(x,y, 1)
           end
         end
