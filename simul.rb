@@ -152,7 +152,3 @@ class ConwayGame
   end
 
 end
-
-         
-
-    
